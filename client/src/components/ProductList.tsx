@@ -1,8 +1,11 @@
+"use client";
+
 import { ProductsType } from "@/types";
 import Categories from "./Categories";
 import ProductCard from "./ProductCard";
 import Link from "next/link";
 import Filter from "./Filter";
+import { useEffect, useState } from "react";
 
 // TEMPORARY
 const products: ProductsType = [
@@ -116,11 +119,25 @@ const products: ProductsType = [
   },
 ];
 
-const ProductList = ({ category,params }: { category: string, params:"homepage" | "products" }) => {
+const ProductList = ({ category, params }: { category: string, params: "homepage" | "products" }) => {
+  const [product, setProducts] = useState(products);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch("https://dummyjson.com/products");
+        const data = await res.json();
+        console.log("Fetched Products:",data.products);
+      } catch (error) {
+        console.error("API fetch error:",error);
+      }
+    };
+    fetchProducts();
+  },[]);
   return (
     <div className="w-full">
       <Categories />
-      {params === "products" && <Filter/>}
+      {params === "products" && <Filter />}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-12">
         {products.map((product) => (
           <ProductCard key={product.id} product={product} />
@@ -136,4 +153,4 @@ const ProductList = ({ category,params }: { category: string, params:"homepage" 
   );
 };
 
-export default ProductList;
+export default ProductList;  
